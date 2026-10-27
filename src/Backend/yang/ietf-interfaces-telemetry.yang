@@ -1,0 +1,167 @@
+module ietf-interfaces-telemetry {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces-telemetry";
+  prefix if-telemetry;
+
+  organization
+    "IETF NETMOD (NETCONF Data Modeling Language) Working Group";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/netmod/>
+     WG List:  <mailto:netmod@ietf.org>";
+  description
+    "This module defines a telemetry subset of RFC 8343 (Interface Management)
+     for streaming network telemetry in the AIORI-3 prototype.";
+
+  revision 2026-10-27 {
+    description
+      "Initial revision adapted for AIORI-3 schema-validated YANG-push pipeline.";
+    reference
+      "RFC 8343: A YANG Data Model for Interface Management";
+  }
+
+  typedef interface-ref {
+    type string;
+    description
+      "Reference to an interface name.";
+  }
+
+  container interface {
+    description
+      "Operational state and telemetry statistics for an interface.";
+
+    leaf name {
+      type string;
+      mandatory true;
+      description
+        "The administrative name of the interface (e.g., GigabitEthernet0/0/0).";
+    }
+
+    leaf type {
+      type string;
+      mandatory true;
+      description
+        "The IANA interface type identifier (e.g., iana-if-type:ethernetCsmacd).";
+    }
+
+    leaf admin-status {
+      type enumeration {
+        enum up {
+          value 1;
+          description "Ready to pass packets.";
+        }
+        enum down {
+          value 2;
+          description "Not ready to pass packets and not in testing.";
+        }
+        enum testing {
+          value 3;
+          description "In some test mode.";
+        }
+      }
+      mandatory true;
+      description
+        "The desired administrative state of the interface.";
+    }
+
+    leaf oper-status {
+      type enumeration {
+        enum up {
+          value 1;
+          description "Ready to pass packets.";
+        }
+        enum down {
+          value 2;
+          description "The interface does not pass any packets.";
+        }
+        enum testing {
+          value 3;
+          description "In some test mode.";
+        }
+        enum unknown {
+          value 4;
+          description "Status cannot be determined for some reason.";
+        }
+        enum dormant {
+          value 5;
+          description "Waiting for external actions.";
+        }
+        enum not-present {
+          value 6;
+          description "Some component is missing.";
+        }
+        enum lower-layer-down {
+          value 7;
+          description "Down due to state of lower-layer interface(s).";
+        }
+      }
+      mandatory true;
+      description
+        "The current operational state of the interface.";
+    }
+
+    leaf speed-mbps {
+      type uint32;
+      description
+        "Current interface bandwidth in Megabits per second.";
+    }
+
+    container statistics {
+      description
+        "A collection of interface-related statistics objects.";
+
+      leaf in-octets {
+        type uint64;
+        mandatory true;
+        description
+          "The total number of octets received on the interface.";
+      }
+
+      leaf in-unicast-pkts {
+        type uint64;
+        mandatory true;
+        description
+          "The number of packets, delivered by this sub-layer to a higher (sub-)layer.";
+      }
+
+      leaf in-discards {
+        type uint32;
+        description
+          "The number of inbound packets chosen to be discarded.";
+      }
+
+      leaf in-errors {
+        type uint32;
+        mandatory true;
+        description
+          "The number of inbound packets that contained errors.";
+      }
+
+      leaf out-octets {
+        type uint64;
+        mandatory true;
+        description
+          "The total number of octets transmitted out of the interface.";
+      }
+
+      leaf out-unicast-pkts {
+        type uint64;
+        mandatory true;
+        description
+          "The total number of packets that higher-level protocols requested be transmitted.";
+      }
+
+      leaf out-discards {
+        type uint32;
+        description
+          "The number of outbound packets chosen to be discarded.";
+      }
+
+      leaf out-errors {
+        type uint32;
+        mandatory true;
+        description
+          "The number of outbound packets that could not be transmitted due to errors.";
+      }
+    }
+  }
+}

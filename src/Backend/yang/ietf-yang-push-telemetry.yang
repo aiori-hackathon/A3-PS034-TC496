@@ -1,0 +1,79 @@
+module ietf-yang-push-telemetry {
+  yang-version 1.1;
+  namespace "urn:ietf:params:xml:ns:yang:ietf-yang-push-telemetry";
+  prefix yp-telemetry;
+
+  organization
+    "IETF NETCONF Working Group";
+  contact
+    "WG Web:   <https://datatracker.ietf.org/wg/netconf/>
+     WG List:  <mailto:netconf@ietf.org>";
+  description
+    "This module defines a telemetry push notification envelope for streaming
+     YANG datastore updates (RFC 8641 / RFC 8639) formatted according to RFC 7951 JSON encoding.";
+
+  revision 2026-10-27 {
+    description
+      "Initial revision adapted for AIORI-3 schema-validated YANG-push pipeline.";
+    reference
+      "RFC 8641: Subscription to YANG Notifications for Datastore Updates
+       RFC 7951: JSON Encoding of Data Modeled with YANG";
+  }
+
+  notification push-telemetry-update {
+    description
+      "Notification sent periodically or on-change containing YANG datastore updates.";
+
+    leaf message-id {
+      type string;
+      mandatory true;
+      description
+        "Unique message identifier for tracking in the telemetry pipeline.";
+    }
+
+    leaf subscription-id {
+      type uint32;
+      mandatory true;
+      description
+        "Identifier of the subscription in accordance with RFC 8639.";
+    }
+
+    leaf source {
+      type string;
+      mandatory true;
+      description
+        "Originating network node identifier or hostname.";
+    }
+
+    leaf timestamp {
+      type string;
+      mandatory true;
+      description
+        "Time the telemetry sample was collected at the network element.";
+    }
+
+    leaf path {
+      type string;
+      mandatory true;
+      description
+        "YANG schema path identifying the monitored subtree.";
+    }
+
+    leaf encoding {
+      type enumeration {
+        enum json_ietf {
+          description "JSON encoding according to RFC 7951.";
+        }
+      }
+      mandatory true;
+      description
+        "Encoding used for the telemetry data payload.";
+    }
+
+    anydata data {
+      mandatory true;
+      description
+        "The model-structured telemetry payload adhering to the specified YANG subtree.";
+    }
+  }
+}
